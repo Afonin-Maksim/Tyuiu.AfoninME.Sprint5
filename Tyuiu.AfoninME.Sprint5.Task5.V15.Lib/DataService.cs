@@ -12,30 +12,33 @@ namespace Tyuiu.AfoninME.Sprint5.Task5.V15.Lib
             if (!File.Exists(path))
                 throw new FileNotFoundException("Файл не найден.", path);
 
-            string fileContent = File.ReadAllText(path);
-            char[] separators = { ' ', ',', '\t', '\n', '\r', ';' };
-            string[] parts = fileContent.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            double? min = null;
 
-            double min = double.MaxValue;
-            bool found = false;
-
-            foreach (var part in parts)
+            using (StreamReader sr = new StreamReader(path))
             {
-                string normalized = part.Replace(',', '.');
-                if (double.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out double val))
+                while (!sr.EndOfStream)
                 {
-                    if (Math.Abs(val % 5) < 1e-9)
+                    string line = sr.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    string[] parts = line.Split(new char[] { ' ', '\t', ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (string s in parts)
                     {
-                        if (val < min)
+                        if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
                         {
-                            min = val;
-                            found = true;
+                            // Проверяем: число положительное и делится на 5
+                            if (value > 0 && Math.Abs(value % 5) < 1e-9)
+                            {
+                                if (!min.HasValue || value < min.Value)
+                                    min = value;
+                            }
                         }
                     }
                 }
             }
 
-            return found ? Math.Round(min, 3) : double.NaN;
+            return min.HasValue ? Math.Round(min.Value, 3) : double.NaN;
         }
     }
 }
