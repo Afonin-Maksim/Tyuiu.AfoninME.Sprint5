@@ -16,7 +16,7 @@ namespace Tyuiu.AfoninME.Sprint5.Task6.V13.Lib
 
             for (int i = 0; i < text.Length - 1; i++)
             {
-                if (text[i] == 'c' && text[i + 1] == 'c')
+                if (text[i] == 'с' && text[i + 1] == 'с')
                     count++;
             }
 
