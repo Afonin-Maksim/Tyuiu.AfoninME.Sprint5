@@ -9,19 +9,33 @@ namespace Tyuiu.AfoninME.Sprint5.Task5.V15.Lib
     {
         public double LoadFromDataFile(string path)
         {
-            double minNum = double.MaxValue;
-            using (StreamReader reader = new StreamReader(path))
+            if (!File.Exists(path))
+                throw new FileNotFoundException("Файл не найден.", path);
+
+            string fileContent = File.ReadAllText(path);
+            char[] separators = { ' ', ',', '\t', '\n', '\r', ';' };
+            string[] parts = fileContent.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
+            double min = double.MaxValue;
+            bool found = false;
+
+            foreach (var part in parts)
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
+                string normalized = part.Replace(',', '.');
+                if (double.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out double val))
                 {
-                    if (Convert.ToDouble(line) % 5 == 0 && Convert.ToDouble(line) < minNum)
+                    if (Math.Abs(val % 5) < 1e-9)
                     {
-                        minNum = Convert.ToDouble(line);
+                        if (val < min)
+                        {
+                            min = val;
+                            found = true;
+                        }
                     }
                 }
             }
-            return minNum;
+
+            return found ? Math.Round(min, 3) : double.NaN;
         }
     }
 }
