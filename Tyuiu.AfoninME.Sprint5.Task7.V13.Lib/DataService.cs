@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.IO;
 using tyuiu.cources.programming.interfaces.Sprint5;
 
 namespace Tyuiu.AfoninME.Sprint5.Task7.V13.Lib
@@ -7,18 +8,41 @@ namespace Tyuiu.AfoninME.Sprint5.Task7.V13.Lib
     {
         public string LoadDataAndSave(string path)
         {
-            string text = File.ReadAllText(path);
-
-            path = Path.Combine(Path.GetTempPath(), "OutPutDataFileTask7V13.txt");
-
-            if (File.Exists(path))
+            if (!File.Exists(path))
             {
-                File.Delete(path);
+                throw new FileNotFoundException("Файл не найден!", path);
             }
 
-            File.WriteAllText(path, Regex.Replace(text, "[a-z]", ""));
+            // Составляем путь к выходному файлу во временной директории
+            string pathSaveFile = Path.Combine(Path.GetTempPath(), "OutPutDataFileTask7V13.txt");
 
-            return path;
+            // Если файл уже существует — удаляем
+            if (File.Exists(pathSaveFile))
+            {
+                File.Delete(pathSaveFile);
+            }
+
+            using (StreamReader reader = new StreamReader(path))
+            {
+                string? line;
+
+                // Обрабатываем построчно: удаляем все строчные латинские буквы
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string filteredLine = "";
+                    for (int i = 0; i < line.Length; i++)
+                    {
+                        if (!(line[i] >= 'a' && line[i] <= 'z'))
+                        {
+                            filteredLine += line[i];
+                        }
+                    }
+
+                    File.AppendAllText(pathSaveFile, filteredLine + Environment.NewLine);
+                }
+            }
+
+            return pathSaveFile;
         }
     }
 }

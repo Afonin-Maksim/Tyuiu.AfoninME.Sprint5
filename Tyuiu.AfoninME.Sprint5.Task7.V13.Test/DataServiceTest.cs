@@ -1,14 +1,27 @@
-﻿using Tyuiu.AfoninME.Sprint5.Task7.V13.Lib;
+﻿using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Tyuiu.AfoninME.Sprint5.Task7.V13.Lib;
 
-namespace Tyuiu.AfoninME.Sprint5.Task7.V13.Test;
+namespace Tyuiu.AfoninME.Sprint5.Task7.V13.Test
 {
-    public class DataServiceTest
-{
-    [Fact]
-    public void CheckLoadFromDataFile()
+    [TestClass]
+    public sealed class DataServiceTest
     {
-        var result = new DataService();
-        Assert.Equals(true, new FileInfo($@"{Path.GetTempPath()}\OutPutDataFileTask7V13.txt").Exists);
+        [TestMethod]
+        public void CheckedCreateOutputFile()
+        {
+            // Создаём временный входной файл
+            string tempDir = Path.GetTempPath();
+            string inputPath = Path.Combine(tempDir, "InPutDataFileTask7V13.txt");
+            File.WriteAllText(inputPath, "AbCdEfG123xYz");
+
+            // Вызываем метод
+            DataService ds = new DataService();
+            string outputPath = ds.LoadDataAndSave(inputPath);
+
+            // Проверяем, что файл создан
+            bool fileExists = File.Exists(outputPath);
+            Assert.IsTrue(fileExists);
+        }
     }
-}
 }
