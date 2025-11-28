@@ -12,21 +12,14 @@ namespace Tyuiu.AfoninME.Sprint5.Task7.V13.Lib
             {
                 throw new FileNotFoundException("Файл не найден!", path);
             }
-
-            // Составляем путь к выходному файлу во временной директории
             string pathSaveFile = Path.Combine(Path.GetTempPath(), "OutPutDataFileTask7V13.txt");
-
-            // Если файл уже существует — удаляем
             if (File.Exists(pathSaveFile))
             {
                 File.Delete(pathSaveFile);
             }
-
             using (StreamReader reader = new StreamReader(path))
             {
                 string? line;
-
-                // Обрабатываем построчно: удаляем все строчные латинские буквы
                 while ((line = reader.ReadLine()) != null)
                 {
                     string filteredLine = "";
@@ -37,7 +30,6 @@ namespace Tyuiu.AfoninME.Sprint5.Task7.V13.Lib
                             filteredLine += line[i];
                         }
                     }
-
                     File.AppendAllText(pathSaveFile, filteredLine + Environment.NewLine);
                 }
             }
