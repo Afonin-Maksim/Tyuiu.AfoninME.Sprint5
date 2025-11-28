@@ -5,18 +5,20 @@ using Tyuiu.AfoninME.Sprint5.Task1.V29.Lib;
 namespace Tyuiu.AfoninME.Sprint5.Task1.V29.Test
 {
     [TestClass]
-    public class DataServiceTest
+    public sealed class DataServiceTest
     {
         [TestMethod]
         public void ValidSaveToFileTextData()
         {
             DataService ds = new DataService();
 
-            // вызываем метод, который сам создаёт файл и вернёт его путь
-            string filePath = ds.SaveToFileTextData(-5, 5);
+            int start = -5;
+            int stop = 5;
 
-            // проверяем, что такой файл теперь существует
-            bool fileExists = File.Exists(filePath);
+            string path = ds.SaveToFileTextData(start, stop);
+
+            // Проверка: после вызова метод должен создать файл
+            bool fileExists = File.Exists(path);
 
             Assert.AreEqual(true, fileExists);
         }
