@@ -9,37 +9,19 @@ namespace Tyuiu.AfoninME.Sprint5.Task5.V15.Lib
     {
         public double LoadFromDataFile(string path)
         {
-            // Читаем весь файл одной строкой
-            string fileContent = File.ReadAllText(path);
-
-            // Разбиваем по пробелам, табам, переводам строк и точкам с запятой
-            char[] separators = { ' ', '\t', '\n', '\r', ';' };
-            string[] parts = fileContent.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-
-            double min = double.MaxValue;
-            bool found = false;
-
-            foreach (string part in parts)
+            double minNum = double.MaxValue;
+            using (StreamReader reader = new StreamReader(path))
             {
-                // Нормализуем разделитель десятичной точки
-                string normalized = part.Replace(',', '.');
-
-                // Пробуем преобразовать каждое значение
-                if (double.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    // Проверяем деление на 5
-                    if (Math.Abs(value % 5) < 1e-9)
+                    if (Convert.ToDouble(line) % 5 == 0 && Convert.ToDouble(line) < minNum)
                     {
-                        if (value < min)
-                        {
-                            min = value;
-                            found = true;
-                        }
+                        minNum = Convert.ToDouble(line);
                     }
                 }
             }
-
-            return found ? Math.Round(min, 3) : double.NaN;
+            return minNum;
         }
     }
 }
