@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using tyuiu.cources.programming.interfaces.Sprint5;
 
 namespace Tyuiu.AfoninME.Sprint5.Task5.V15.Lib
@@ -10,33 +9,37 @@ namespace Tyuiu.AfoninME.Sprint5.Task5.V15.Lib
     {
         public double LoadFromDataFile(string path)
         {
-            string[] lines = File.ReadAllLines(path);
+            // Читаем весь файл одной строкой
+            string fileContent = File.ReadAllText(path);
+
+            // Разбиваем по пробелам, табам, переводам строк и точкам с запятой
+            char[] separators = { ' ', '\t', '\n', '\r', ';' };
+            string[] parts = fileContent.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
             double min = double.MaxValue;
             bool found = false;
 
-            foreach (string line in lines)
+            foreach (string part in parts)
             {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
+                // Нормализуем разделитель десятичной точки
+                string normalized = part.Replace(',', '.');
 
-                // Универсальное преобразование (точка и запятая)
-                double value = Convert.ToDouble(line.Trim().Replace(",", "."), CultureInfo.InvariantCulture);
-
-                if (Math.Abs(value % 5) < 1e-9)
+                // Пробуем преобразовать каждое значение
+                if (double.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
                 {
-                    if (value < min)
+                    // Проверяем деление на 5
+                    if (Math.Abs(value % 5) < 1e-9)
                     {
-                        min = value;
-                        found = true;
+                        if (value < min)
+                        {
+                            min = value;
+                            found = true;
+                        }
                     }
                 }
             }
 
-            if (!found)
-                return double.NaN;
-
-            return Math.Round(min, 3);
+            return found ? Math.Round(min, 3) : double.NaN;
         }
     }
 }
