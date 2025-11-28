@@ -11,12 +11,13 @@ namespace Tyuiu.AfoninME.Sprint5.Task6.V13.Lib
             if (!File.Exists(path))
                 throw new FileNotFoundException("Файл не найден.", path);
 
-            string text = File.ReadAllText(path);
-
+            string text = File.ReadAllText(path).ToLower(); // чтобы не зависеть от регистра
             int count = 0;
+
             for (int i = 0; i < text.Length - 1; i++)
             {
-                if (text[i] == 'c' && text[i + 1] == 'c') count++;
+                if (text[i] == 'c' && text[i + 1] == 'c')
+                    count++;
             }
 
             return count;
